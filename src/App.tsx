@@ -1,9 +1,13 @@
-import { makeStyles } from "@material-ui/core/styles";
+import {
+  createTheme,
+  makeStyles,
+  ThemeProvider,
+} from "@material-ui/core/styles";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Header from "./components/Header";
 import CoinPage from "./pages/CoinPage";
-import Home from "./pages/Home";
+import HomePage from "./pages/HomePage";
 
 const useStyles = makeStyles({
   App: {
@@ -13,19 +17,30 @@ const useStyles = makeStyles({
   },
 });
 
+const darkTheme = createTheme({
+  palette: {
+    primary: {
+      main: "#fff",
+    },
+    type: "dark",
+  },
+});
+
 function App() {
   const classes = useStyles();
 
   return (
-    <BrowserRouter>
-      <div className={classes.App}>
-        <Header />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/coins/:id" element={<CoinPage />} />
-        </Routes>
-      </div>
-    </BrowserRouter>
+    <ThemeProvider theme={darkTheme}>
+      <BrowserRouter>
+        <div className={classes.App}>
+          <Header />
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/coins/:id" element={<CoinPage />} />
+          </Routes>
+        </div>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
 

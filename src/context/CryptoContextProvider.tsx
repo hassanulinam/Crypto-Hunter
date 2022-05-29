@@ -1,9 +1,9 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
 export type TypeOfCryptoContext = {
-  currency: string | unknown;
+  currency: string;
   symbol: string;
-  setCurrency: React.Dispatch<React.SetStateAction<string | unknown>>;
+  setCurrency: React.Dispatch<React.SetStateAction<string>>;
 };
 
 const cryptoContext = createContext<TypeOfCryptoContext>({
@@ -13,12 +13,12 @@ const cryptoContext = createContext<TypeOfCryptoContext>({
 });
 
 const CryptoContextProvider = ({ children }: { children: JSX.Element }) => {
-  const [currency, setCurrency] = useState<string | unknown>("INR");
+  const [currency, setCurrency] = useState<string>("INR");
   const [symbol, setSymbol] = useState("₹");
 
   useEffect(() => {
-    if (currency == "INR") setSymbol("₹");
-    else if (currency == "USD") setSymbol("$");
+    if (currency === "INR") setSymbol("₹");
+    else if (currency === "USD") setSymbol("$");
   }, [currency]);
 
   return (

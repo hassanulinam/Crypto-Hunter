@@ -1,7 +1,7 @@
 import Banner from "../components/Banner";
 import CoinsTable from "../components/CoinsTable";
 
-const Home = () => {
+const HomePage = () => {
   return (
     <>
       <Banner />;
@@ -10,4 +10,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default HomePage;
