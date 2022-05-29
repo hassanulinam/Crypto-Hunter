@@ -134,7 +134,7 @@ const CoinPage = () => {
         </div>
       </div>
       {/* chart */}
-      <CoinInfo />
+      <CoinInfo coinId={coin.id} />
     </div>
   );
 };
