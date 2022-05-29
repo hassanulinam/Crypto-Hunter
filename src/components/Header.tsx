@@ -34,7 +34,7 @@ const Header = () => {
   const classes = useStyles();
   const navigate = useNavigate();
 
-  const { currency, symbol, setCurrency } = CryptoState();
+  const { currency, setCurrency } = CryptoState();
 
   return (
     <ThemeProvider theme={darkTheme}>

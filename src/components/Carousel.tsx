@@ -56,7 +56,7 @@ const Carousel = () => {
         <span>{coin?.symbol} &nbsp;</span>
         <span
           style={{
-            color: profit ? "rgba(14, 203, 129" : "red",
+            color: profit ? "rgb(14, 203, 129)" : "red",
             fontWeight: 500,
           }}
         >
