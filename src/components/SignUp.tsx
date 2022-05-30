@@ -1,12 +1,46 @@
 import { Box, Button, TextField } from "@material-ui/core";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
+import { UserAuthState } from "../context/UserAuthContextProvider";
+import { auth } from "../pages/firebaseApp";
 
 const SignUp = ({ handleClose }: { handleClose: () => void }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const handleSubmit = () => {};
+  const { setAlert } = UserAuthState();
+
+  const handleSubmit = async () => {
+    if (password !== confirmPassword) {
+      setAlert({
+        open: true,
+        message: "Passwords do not match",
+        type: "error",
+      });
+    }
+    try {
+      const result = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      console.log({ result });
+      setAlert({
+        open: true,
+        message: `Sign up successful. Welcome ${result.user.email}`,
+        type: "success",
+      });
+      // to close the modal automatically after successful sign-up.
+      handleClose();
+    } catch (err: any) {
+      setAlert({
+        open: true,
+        message: err.message,
+        type: "error",
+      });
+    }
+  };
 
   return (
     <Box
@@ -14,7 +48,7 @@ const SignUp = ({ handleClose }: { handleClose: () => void }) => {
         display: "flex",
         flexDirection: "column",
         gap: "20px",
-        padding: 16,
+        padding: 20,
       }}
     >
       <TextField

@@ -7,6 +7,7 @@ import {
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Header from "./components/Header";
+import SnackBarAlert from "./components/SnackBarAlert";
 import CoinPage from "./pages/CoinPage";
 import HomePage from "./pages/HomePage";
 
@@ -40,6 +41,7 @@ function App() {
             <Route path="/coins/:id" element={<CoinPage />} />
           </Routes>
         </div>
+        <SnackBarAlert />
       </BrowserRouter>
     </ThemeProvider>
   );
