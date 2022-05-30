@@ -16,6 +16,7 @@ import {
   Legend,
 } from "chart.js";
 import chartDays from "../config/days";
+import SelectDaysButton from "./SelectDaysButton";
 
 ChartJS.register(
   CategoryScale,
@@ -106,14 +107,12 @@ const CoinInfo = ({ coinId }: { coinId: string }) => {
             }}
           >
             {chartDays.map((day) => (
-              <Button
-                variant={day.value === days ? "contained" : "outlined"}
-                color="primary"
+              <SelectDaysButton
                 key={day.value}
+                selected={day.value === days}
                 onClick={() => setDays(day.value)}
-              >
-                {day.label}
-              </Button>
+                label={day.label}
+              />
             ))}
           </div>
         </>

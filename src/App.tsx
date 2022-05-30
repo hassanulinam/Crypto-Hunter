@@ -2,6 +2,7 @@ import {
   createTheme,
   makeStyles,
   ThemeProvider,
+  Theme,
 } from "@material-ui/core/styles";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
@@ -9,13 +10,13 @@ import Header from "./components/Header";
 import CoinPage from "./pages/CoinPage";
 import HomePage from "./pages/HomePage";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme: Theme) => ({
   App: {
     backgroundColor: "#14161a",
     color: "white",
     minHeight: "100vh",
   },
-});
+}));
 
 const darkTheme = createTheme({
   palette: {

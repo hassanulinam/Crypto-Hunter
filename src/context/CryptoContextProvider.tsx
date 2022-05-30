@@ -15,6 +15,7 @@ const cryptoContext = createContext<TypeOfCryptoContext>({
 const CryptoContextProvider = ({ children }: { children: JSX.Element }) => {
   const [currency, setCurrency] = useState<string>("INR");
   const [symbol, setSymbol] = useState("₹");
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     if (currency === "INR") setSymbol("₹");
