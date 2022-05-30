@@ -3,13 +3,16 @@ import { makeStyles } from "@material-ui/styles";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import parse from "html-react-parser";
 import { numberWithCommas } from "../components/Carousel";
 import CoinInfo from "../components/CoinInfo";
 import { SingleCoinUrl } from "../config/api";
 import { CryptoState } from "../context/CryptoContextProvider";
+import { Autocomplete } from "@material-ui/lab";
 const useStyles = makeStyles((theme: any) => ({
   container: {
     display: "flex",
+    height: "100%",
     [theme.breakpoints.down("md")]: {
       flexDirection: "column",
       alignItems: "center",
@@ -17,6 +20,7 @@ const useStyles = makeStyles((theme: any) => ({
   },
   sidebar: {
     width: "30%",
+    height: "100%",
     [theme.breakpoints.down("md")]: {
       width: "100%",
     },
@@ -25,6 +29,7 @@ const useStyles = makeStyles((theme: any) => ({
     alignItems: "center",
     marginTop: 25,
     borderRight: "2px solid grey",
+    overflowY: "auto",
   },
   heading: {
     fontWeight: "bold",
@@ -67,7 +72,7 @@ const CoinPage = () => {
   const fetchCoinDetails = async (): Promise<any> => {
     const { data } = await axios.get(SingleCoinUrl(id));
     setCoin(data);
-    console.log(data);
+    console.log(data.description.en);
   };
 
   useEffect(() => {
@@ -89,10 +94,7 @@ const CoinPage = () => {
           {coin?.name}
         </Typography>
         <Typography variant="subtitle1" className={classes.description}>
-          Lorem ipsum dolor sit amet consectetur, adipisicing elit. Aperiam
-          optio fuga beatae possimus autem, accusantium soluta ratione iure
-          corrupti delectus necessitatibus nulla corporis placeat veritatis
-          eveniet provident ipsam et est! Facilis magni magnam, aliquam aut
+          {parse(coin?.description.en.split(". ").splice(0, 4).join(". "))}
         </Typography>
         <div className={classes.marketData}>
           <span style={{ display: "flex" }}>

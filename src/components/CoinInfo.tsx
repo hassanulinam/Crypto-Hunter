@@ -16,7 +16,6 @@ import {
   Legend,
 } from "chart.js";
 import chartDays from "../config/days";
-import SelectDaysButton from "./SelectDaysButton";
 
 ChartJS.register(
   CategoryScale,
