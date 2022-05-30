@@ -1,6 +1,6 @@
 import { Snackbar, SnackbarCloseReason } from "@material-ui/core";
 import MuiAlert from "@material-ui/lab/Alert";
-import { UserAuthState } from "../context/UserAuthContextProvider";
+import { UserAuthState } from "../../context/UserAuthContextProvider";
 
 const SnackBarAlert = () => {
   const { alert, setAlert } = UserAuthState();

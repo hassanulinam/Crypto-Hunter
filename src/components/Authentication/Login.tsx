@@ -1,42 +1,37 @@
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { Box, Button, TextField } from "@material-ui/core";
-import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
-import { UserAuthState } from "../context/UserAuthContextProvider";
-import { auth } from "../pages/firebaseApp";
+import { UserAuthState } from "../../context/UserAuthContextProvider";
+import { auth } from "../../pages/firebaseApp";
 
-const SignUp = ({ handleClose }: { handleClose: () => void }) => {
+const Login = ({ handleClose }: { handleClose: () => void }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
 
   const { setAlert } = UserAuthState();
 
   const handleSubmit = async () => {
-    if (password !== confirmPassword) {
+    if (!email || !password) {
       setAlert({
         open: true,
-        message: "Passwords do not match",
+        message: "Please fill all the Fields",
         type: "error",
       });
+      return;
     }
     try {
-      const result = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      console.log({ result });
+      const result = await signInWithEmailAndPassword(auth, email, password);
       setAlert({
         open: true,
-        message: `Sign up successful. Welcome ${result.user.email}`,
+        message: `Login successful. Welcome ${result.user.email}`,
         type: "success",
       });
-      // to close the modal automatically after successful sign-up.
+      // automatically close modal after successful login.
       handleClose();
-    } catch (err: any) {
+    } catch (error: any) {
       setAlert({
         open: true,
-        message: err.message,
+        message: error.message,
         type: "error",
       });
     }
@@ -66,24 +61,17 @@ const SignUp = ({ handleClose }: { handleClose: () => void }) => {
         onChange={(e: any) => setPassword(e.target.value)}
         fullWidth
       />
-      <TextField
-        variant="outlined"
-        label="Confirm Password"
-        type="password"
-        value={confirmPassword}
-        onChange={(e: any) => setConfirmPassword(e.target.value)}
-        fullWidth
-      />
+
       <Button
         variant="contained"
         size="large"
         style={{ backgroundColor: "#EEBC1D" }}
         onClick={handleSubmit}
       >
-        Sign Up
+        Login
       </Button>
     </Box>
   );
 };
 
-export default SignUp;
+export default Login;

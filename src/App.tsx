@@ -7,7 +7,7 @@ import {
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Header from "./components/Header";
-import SnackBarAlert from "./components/SnackBarAlert";
+import SnackBarAlert from "./components/Authentication/SnackBarAlert";
 import CoinPage from "./pages/CoinPage";
 import HomePage from "./pages/HomePage";
 
