@@ -1,12 +1,20 @@
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { Box, Button, TextField } from "@material-ui/core";
+import {
+  Box,
+  Button,
+  IconButton,
+  InputAdornment,
+  TextField,
+} from "@material-ui/core";
 import { useState } from "react";
+import { Visibility, VisibilityOff } from "@material-ui/icons";
 import { UserAuthState } from "../../context/UserAuthContextProvider";
 import { auth } from "../../pages/firebaseApp";
 
 const Login = ({ handleClose }: { handleClose: () => void }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const { setAlert } = UserAuthState();
 
@@ -56,10 +64,19 @@ const Login = ({ handleClose }: { handleClose: () => void }) => {
       <TextField
         variant="outlined"
         label="Enter Password"
-        type="password"
+        type={showPassword ? "" : "password"}
         value={password}
         onChange={(e: any) => setPassword(e.target.value)}
         fullWidth
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton onClick={() => setShowPassword((show) => !show)}>
+                {showPassword ? <Visibility /> : <VisibilityOff />}
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
       />
 
       <Button

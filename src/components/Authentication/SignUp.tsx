@@ -1,4 +1,11 @@
-import { Box, Button, TextField } from "@material-ui/core";
+import {
+  Box,
+  Button,
+  IconButton,
+  InputAdornment,
+  TextField,
+} from "@material-ui/core";
+import { Visibility, VisibilityOff } from "@material-ui/icons";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
 import { UserAuthState } from "../../context/UserAuthContextProvider";
@@ -8,6 +15,8 @@ const SignUp = ({ handleClose }: { handleClose: () => void }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setshowConfirmPassword] = useState(false);
 
   const { setAlert } = UserAuthState();
 
@@ -61,18 +70,38 @@ const SignUp = ({ handleClose }: { handleClose: () => void }) => {
       <TextField
         variant="outlined"
         label="Enter Password"
-        type="password"
+        type={showPassword ? "" : "password"}
         value={password}
         onChange={(e: any) => setPassword(e.target.value)}
         fullWidth
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton onClick={() => setShowPassword((show) => !show)}>
+                {showPassword ? <Visibility /> : <VisibilityOff />}
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
       />
       <TextField
         variant="outlined"
         label="Confirm Password"
-        type="password"
+        type={showConfirmPassword ? "" : "password"}
         value={confirmPassword}
         onChange={(e: any) => setConfirmPassword(e.target.value)}
         fullWidth
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton
+                onClick={() => setshowConfirmPassword((show) => !show)}
+              >
+                {showConfirmPassword ? <Visibility /> : <VisibilityOff />}
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
       />
       <Button
         variant="contained"
