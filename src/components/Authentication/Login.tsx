@@ -6,7 +6,7 @@ import {
   InputAdornment,
   TextField,
 } from "@material-ui/core";
-import { useState } from "react";
+import React, { useState } from "react";
 import { Visibility, VisibilityOff } from "@material-ui/icons";
 import { UserAuthState } from "../../context/UserAuthContextProvider";
 import { auth } from "../../pages/firebaseApp";

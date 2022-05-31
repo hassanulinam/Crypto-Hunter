@@ -3,9 +3,13 @@ import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
 import Modal from "@material-ui/core/Modal";
 import Backdrop from "@material-ui/core/Backdrop";
 import Fade from "@material-ui/core/Fade";
-import { AppBar, Button, Tab, Tabs } from "@material-ui/core";
+import { AppBar, Box, Button, Tab, Tabs } from "@material-ui/core";
 import Login from "./Login";
 import SignUp from "./SignUp";
+import GoogleButton from "react-google-button";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth } from "../../pages/firebaseApp";
+import { UserAuthState } from "../../context/UserAuthContextProvider";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -20,6 +24,15 @@ const useStyles = makeStyles((theme: Theme) =>
       width: 400,
       color: "white",
       borderRadius: 10,
+    },
+    google: {
+      padding: 24,
+      paddingTop: 0,
+      display: "flex",
+      flexDirection: "column",
+      textAlign: "center",
+      gap: 20,
+      fontSize: 20,
     },
   })
 );
@@ -39,6 +52,28 @@ export default function AuthModal() {
   const [value, setValue] = useState(0);
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setValue(newValue);
+  };
+
+  const googleProvider = new GoogleAuthProvider();
+  const { setAlert } = UserAuthState();
+
+  const signInWithGoogle = () => {
+    signInWithPopup(auth, googleProvider)
+      .then((res) => {
+        setAlert({
+          open: true,
+          message: `Sign Up Successful. Welcome ${res.user.email}`,
+          type: "success",
+        });
+        handleClose();
+      })
+      .catch((err) => {
+        setAlert({
+          open: true,
+          message: err.message,
+          type: "error",
+        });
+      });
   };
 
   return (
@@ -84,6 +119,13 @@ export default function AuthModal() {
             </AppBar>
             {value === 0 && <Login handleClose={handleClose} />}
             {value === 1 && <SignUp handleClose={handleClose} />}
+            <Box className={classes.google}>
+              <span>OR</span>
+              <GoogleButton
+                onClick={signInWithGoogle}
+                style={{ width: "100%", outline: "none" }}
+              />
+            </Box>
           </div>
         </Fade>
       </Modal>
