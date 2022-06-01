@@ -1,13 +1,11 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Drawer from "@material-ui/core/Drawer";
-import Button from "@material-ui/core/Button";
-import { Avatar } from "@material-ui/core";
+import { Avatar, Theme, Drawer, Button } from "@material-ui/core";
 import { UserAuthState } from "../../context/UserAuthContextProvider";
 import { signOut } from "firebase/auth";
 import { auth } from "../../pages/firebaseApp";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme: Theme) => ({
   container: {
     width: 350,
     padding: 25,
@@ -50,7 +48,7 @@ const useStyles = makeStyles({
     gap: 12,
     overflowY: "scroll",
   },
-});
+}));
 
 type Anchor = "top" | "left" | "bottom" | "right";
 
@@ -95,8 +93,6 @@ export default function UserSideBar() {
             cursor: "pointer",
             backgroundColor: "#EEBC1D",
           }}
-          src={user.photoURL}
-          alt={user.displayName || user.email}
         />
         <Drawer
           anchor={anchor}
@@ -105,11 +101,7 @@ export default function UserSideBar() {
         >
           <div className={classes.container}>
             <div className={classes.profile}>
-              <Avatar
-                className={classes.picture}
-                src={user.photoURL}
-                alt={user.displayName || user.email}
-              />
+              <Avatar className={classes.picture} />
               <span
                 style={{
                   width: "100%",
@@ -119,7 +111,7 @@ export default function UserSideBar() {
                   wordWrap: "break-word",
                 }}
               >
-                {user.displayName || user.email}
+                {user?.displayName || user?.email}
               </span>
               <div className={classes.watchlist}>
                 <span style={{ fontSize: 15, textShadow: "0 0 5px black" }}>

@@ -56,7 +56,7 @@ const CoinsTable = () => {
   const classes = useStyles();
   const navigate = useNavigate();
 
-  const fetchCoins = async (): Promise<any> => {
+  const fetchCoins = async (): Promise<void> => {
     const { data } = await axios.get(CoinsListUrl(currency));
     setCoins(data);
     setIsLoading(false);
@@ -66,7 +66,7 @@ const CoinsTable = () => {
     coins.filter(
       (c: any) =>
         c.name.toLowerCase().includes(searchInput) ||
-        c?.symbol.toLowerCase().includes(searchInput)
+        c.symbol.toLowerCase().includes(searchInput)
     );
 
   useEffect(() => {

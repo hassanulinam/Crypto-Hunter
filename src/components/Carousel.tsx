@@ -30,12 +30,12 @@ export const numberWithCommas = (x: number) =>
   x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
 const Carousel = () => {
-  const [trending, setTrending] = useState<any>([]);
+  const [trendingCoins, setTrendingCoins] = useState<any>([]);
   const { currency, symbol } = CryptoState();
 
-  const fetchTrendingCoins = async (): Promise<any> => {
+  const fetchTrendingCoins = async (): Promise<void> => {
     const { data } = await axios.get(TrendingCoinsUrl(currency));
-    setTrending(data);
+    setTrendingCoins(data);
     console.log("Fetching Trending Coins...");
   };
   useEffect(() => {
@@ -43,7 +43,7 @@ const Carousel = () => {
   }, [currency]);
 
   const classes = useStyles();
-  const items = trending.map((coin: any) => {
+  const items = trendingCoins.map((coin: any) => {
     let profit = coin.price_change_percentage_24h >= 0;
     return (
       <Link to={`/coins/${coin.id}`} className={classes.carouselItem}>

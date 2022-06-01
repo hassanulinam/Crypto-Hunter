@@ -1,4 +1,4 @@
-import { Button, CircularProgress } from "@material-ui/core";
+import { Button, CircularProgress, Theme } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
@@ -28,7 +28,7 @@ ChartJS.register(
   Legend
 );
 
-const useStyles = makeStyles((theme: any) => ({
+const useStyles = makeStyles((theme: Theme) => ({
   container: {
     width: "75%",
     display: "flex",
@@ -53,7 +53,7 @@ const CoinInfo = ({ coinId }: { coinId: string }) => {
   const { currency, symbol } = CryptoState();
   const classes = useStyles();
 
-  const fetchHistoricalData = async (): Promise<any> => {
+  const fetchHistoricalData = async (): Promise<void> => {
     const { data } = await axios.get(
       HistoricalChartUrl(coinId, days, currency)
     );

@@ -1,7 +1,8 @@
 import { Color } from "@material-ui/lab/Alert";
-import { onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged, User } from "firebase/auth";
+import { doc, onSnapshot } from "firebase/firestore";
 import { createContext, useContext, useEffect, useState } from "react";
-import { auth } from "../pages/firebaseApp";
+import { auth, db } from "../pages/firebaseApp";
 
 type TypeOfAlert = {
   open: boolean;
@@ -12,17 +13,20 @@ type TypeOfAlert = {
 type TypeOfUserAuthContext = {
   alert: TypeOfAlert;
   setAlert: React.Dispatch<React.SetStateAction<TypeOfAlert>>;
-  user: any;
+  user: User | null;
+  watchlist: string[];
 };
 
 const UserAuthContext = createContext<TypeOfUserAuthContext>({
   alert: { open: false, message: "", type: "info" },
   setAlert: () => {},
   user: null,
+  watchlist: [],
 });
 
 const UserAuthContextProvider = ({ children }: { children: JSX.Element }) => {
-  const [user, setUser] = useState<any>("");
+  const [user, setUser] = useState<User | null>(null);
+  const [watchlist, setWatchlist] = useState<string[]>([]);
   const [alert, setAlert] = useState<TypeOfAlert>({
     open: false,
     message: "",
@@ -30,14 +34,30 @@ const UserAuthContextProvider = ({ children }: { children: JSX.Element }) => {
   });
 
   useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      if (user) setUser(user);
+    onAuthStateChanged(auth, (userData) => {
+      if (userData) setUser(userData);
       else setUser(null);
     });
   }, []);
 
+  useEffect(() => {
+    if (user) {
+      const coinRef = doc(db, "watchlist", user.uid);
+      var unsubscribe = onSnapshot(coinRef, (coin) => {
+        if (coin.exists()) setWatchlist(coin.data().coins);
+        else {
+          console.error("No Items in Watchlist");
+          setWatchlist([]);
+        }
+      });
+      return () => {
+        unsubscribe();
+      };
+    }
+  }, [user]);
+
   return (
-    <UserAuthContext.Provider value={{ alert, setAlert, user }}>
+    <UserAuthContext.Provider value={{ alert, setAlert, user, watchlist }}>
       {children}
     </UserAuthContext.Provider>
   );
