@@ -1,9 +1,12 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Avatar, Theme, Drawer, Button } from "@material-ui/core";
+import DeleteIcon from "@material-ui/icons/Delete";
 import { UserAuthState } from "../../context/UserAuthContextProvider";
 import { signOut } from "firebase/auth";
 import { auth } from "../../pages/firebaseApp";
+import { CryptoState } from "../../context/CryptoContextProvider";
+import { numberWithCommas } from "../Carousel";
 
 const useStyles = makeStyles((theme: Theme) => ({
   container: {
@@ -48,6 +51,17 @@ const useStyles = makeStyles((theme: Theme) => ({
     gap: 12,
     overflowY: "scroll",
   },
+  wlistCoin: {
+    padding: 10,
+    borderRadius: 5,
+    color: "black",
+    width: "100%",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "#EEBC1D",
+    boxShadow: "0 0 3px black",
+  },
 }));
 
 type Anchor = "top" | "left" | "bottom" | "right";
@@ -55,7 +69,8 @@ type Anchor = "top" | "left" | "bottom" | "right";
 export default function UserSideBar() {
   const classes = useStyles();
   const [state, setState] = React.useState({ right: false });
-  const { user, setAlert } = UserAuthState();
+  const { user, setAlert, watchlist, removeFromWatchlist } = UserAuthState();
+  const { coins, symbol } = CryptoState();
   const anchor: Anchor = "right";
 
   const toggleDrawer =
@@ -93,6 +108,8 @@ export default function UserSideBar() {
             cursor: "pointer",
             backgroundColor: "#EEBC1D",
           }}
+          src={user?.photoURL as string}
+          alt={(user?.displayName || user?.email) as string}
         />
         <Drawer
           anchor={anchor}
@@ -101,7 +118,11 @@ export default function UserSideBar() {
         >
           <div className={classes.container}>
             <div className={classes.profile}>
-              <Avatar className={classes.picture} />
+              <Avatar
+                className={classes.picture}
+                src={user?.photoURL as string}
+                alt={(user?.displayName || user?.email) as string}
+              />
               <span
                 style={{
                   width: "100%",
@@ -117,6 +138,25 @@ export default function UserSideBar() {
                 <span style={{ fontSize: 15, textShadow: "0 0 5px black" }}>
                   Watchlist
                 </span>
+                {coins.map((c: any) => {
+                  if (watchlist.includes(c.id)) {
+                    return (
+                      <div className={classes.wlistCoin}>
+                        <span>{c?.name}</span>
+                        <span style={{ display: "flex", gap: 8 }}>
+                          {symbol}{" "}
+                          {numberWithCommas(c?.current_price.toFixed(2))}
+                        </span>
+                        <DeleteIcon
+                          style={{ cursor: "pointer" }}
+                          fontSize="small"
+                          onClick={() => removeFromWatchlist(c)}
+                        />
+                      </div>
+                    );
+                  }
+                  return <></>;
+                })}
               </div>
             </div>
             <Button

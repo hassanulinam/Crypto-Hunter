@@ -1,6 +1,6 @@
 import { Color } from "@material-ui/lab/Alert";
 import { onAuthStateChanged, User } from "firebase/auth";
-import { doc, onSnapshot } from "firebase/firestore";
+import { doc, onSnapshot, setDoc } from "firebase/firestore";
 import { createContext, useContext, useEffect, useState } from "react";
 import { auth, db } from "../pages/firebaseApp";
 
@@ -15,6 +15,8 @@ type TypeOfUserAuthContext = {
   setAlert: React.Dispatch<React.SetStateAction<TypeOfAlert>>;
   user: User | null;
   watchlist: string[];
+  addToWatchlist: (coin: any) => Promise<void>;
+  removeFromWatchlist: (coin: any) => Promise<void>;
 };
 
 const UserAuthContext = createContext<TypeOfUserAuthContext>({
@@ -22,6 +24,8 @@ const UserAuthContext = createContext<TypeOfUserAuthContext>({
   setAlert: () => {},
   user: null,
   watchlist: [],
+  addToWatchlist: async (coin: any) => {},
+  removeFromWatchlist: async (coin: any) => {},
 });
 
 const UserAuthContextProvider = ({ children }: { children: JSX.Element }) => {
@@ -33,6 +37,7 @@ const UserAuthContextProvider = ({ children }: { children: JSX.Element }) => {
     type: "success",
   });
 
+  // to sync the user login data...
   useEffect(() => {
     onAuthStateChanged(auth, (userData) => {
       if (userData) setUser(userData);
@@ -40,6 +45,7 @@ const UserAuthContextProvider = ({ children }: { children: JSX.Element }) => {
     });
   }, []);
 
+  // to keep watchlist in sync with fireDatabase.
   useEffect(() => {
     if (user) {
       const coinRef = doc(db, "watchlist", user.uid);
@@ -56,8 +62,61 @@ const UserAuthContextProvider = ({ children }: { children: JSX.Element }) => {
     }
   }, [user]);
 
+  const addToWatchlist = async (coin: any) => {
+    const coinRef = doc(db, "watchlist", user!.uid);
+    try {
+      await setDoc(coinRef, {
+        coins: watchlist ? [...watchlist, coin?.id] : [coin?.id],
+      });
+      setAlert({
+        open: true,
+        message: `${coin.name} has been added to watchlist !`,
+        type: "success",
+      });
+    } catch (err: any) {
+      setAlert({
+        open: true,
+        message: err.message,
+        type: "error",
+      });
+    }
+  };
+
+  const removeFromWatchlist = async (coin: any) => {
+    const coinRef = doc(db, "watchlist", user!.uid);
+    try {
+      await setDoc(
+        coinRef,
+        {
+          coins: watchlist.filter((coinId) => coinId !== coin.id),
+        },
+        { merge: true }
+      );
+      setAlert({
+        open: true,
+        message: `${coin.name} has been remove from watchlist !`,
+        type: "warning",
+      });
+    } catch (err: any) {
+      setAlert({
+        open: true,
+        message: err.message,
+        type: "error",
+      });
+    }
+  };
+
   return (
-    <UserAuthContext.Provider value={{ alert, setAlert, user, watchlist }}>
+    <UserAuthContext.Provider
+      value={{
+        alert,
+        setAlert,
+        user,
+        watchlist,
+        addToWatchlist,
+        removeFromWatchlist,
+      }}
+    >
       {children}
     </UserAuthContext.Provider>
   );

@@ -9,8 +9,6 @@ import CoinInfo from "../components/CoinInfo";
 import { SingleCoinUrl } from "../config/api";
 import { CryptoState } from "../context/CryptoContextProvider";
 import { UserAuthState } from "../context/UserAuthContextProvider";
-import { doc, setDoc } from "firebase/firestore";
-import { db } from "./firebaseApp";
 
 const useStyles = makeStyles((theme: Theme) => ({
   container: {
@@ -72,65 +70,20 @@ const CoinPage = () => {
   const [coin, setCoin] = useState<any>("");
   const { currency, symbol } = CryptoState();
   const classes = useStyles();
-  const { user, setAlert, watchlist } = UserAuthState();
+  const { user, watchlist, addToWatchlist, removeFromWatchlist } =
+    UserAuthState();
   const inWatchlist = watchlist.includes(coin?.id);
 
-  const fetchCoinDetails = async (): Promise<void> => {
-    const { data } = await axios.get(SingleCoinUrl(id));
-    setCoin(data);
-    console.log(data.description.en);
-  };
-
   useEffect(() => {
+    const fetchCoinDetails = async (): Promise<void> => {
+      const { data } = await axios.get(SingleCoinUrl(id));
+      setCoin(data);
+    };
     fetchCoinDetails();
+    // eslint-disable-next-line
   }, [currency]);
 
-  const addToWatchlist = async () => {
-    const coinRef = doc(db, "watchlist", user!.uid);
-    try {
-      await setDoc(coinRef, {
-        coins: watchlist ? [...watchlist, coin?.id] : [coin?.id],
-      });
-      setAlert({
-        open: true,
-        message: `${coin.name} has been added to watchlist !`,
-        type: "success",
-      });
-    } catch (err: any) {
-      setAlert({
-        open: true,
-        message: err.message,
-        type: "error",
-      });
-    }
-  };
-
-  const removeFromWatchlist = async () => {
-    const coinRef = doc(db, "watchlist", user!.uid);
-    try {
-      await setDoc(
-        coinRef,
-        {
-          coins: watchlist.filter((coinId) => coinId !== coin.id),
-        },
-        { merge: true }
-      );
-      setAlert({
-        open: true,
-        message: `${coin.name} has been remove from watchlist !`,
-        type: "success",
-      });
-    } catch (err: any) {
-      setAlert({
-        open: true,
-        message: err.message,
-        type: "error",
-      });
-    }
-  };
-
   if (!coin) return <LinearProgress style={{ backgroundColor: "gold" }} />;
-
   return (
     <div className={classes.container}>
       <div className={classes.sidebar}>
@@ -191,7 +144,11 @@ const CoinPage = () => {
                 height: 40,
                 backgroundColor: inWatchlist ? "#ff0000" : "#EEBC1D",
               }}
-              onClick={inWatchlist ? removeFromWatchlist : addToWatchlist}
+              onClick={
+                inWatchlist
+                  ? () => removeFromWatchlist(coin)
+                  : () => addToWatchlist(coin)
+              }
             >
               {inWatchlist ? "Remove from Watchlist" : "Add to Watchlist"}
             </Button>

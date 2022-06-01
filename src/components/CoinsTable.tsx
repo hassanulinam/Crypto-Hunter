@@ -14,10 +14,8 @@ import {
   Typography,
 } from "@material-ui/core";
 import { Pagination } from "@material-ui/lab";
-import axios from "axios";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { CoinsListUrl } from "../config/api";
 import { CryptoState } from "../context/CryptoContextProvider";
 import { numberWithCommas } from "./Carousel";
 
@@ -47,32 +45,23 @@ const useStyles = makeStyles({
 });
 
 const CoinsTable = () => {
-  const [coins, setCoins] = useState<any>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const { coins } = CryptoState();
   const [page, setPage] = useState(1);
   const [searchInput, setSearchInput] = useState("");
 
-  const { currency, symbol } = CryptoState();
+  const { symbol } = CryptoState();
   const classes = useStyles();
   const navigate = useNavigate();
 
-  const fetchCoins = async (): Promise<void> => {
-    const { data } = await axios.get(CoinsListUrl(currency));
-    setCoins(data);
-    setIsLoading(false);
+  const filteredCoins = () => {
+    if (coins)
+      return coins.filter(
+        (c: any) =>
+          c.name.toLowerCase().includes(searchInput) ||
+          c.symbol.toLowerCase().includes(searchInput)
+      );
+    return coins;
   };
-
-  const filteredCoins = () =>
-    coins.filter(
-      (c: any) =>
-        c.name.toLowerCase().includes(searchInput) ||
-        c.symbol.toLowerCase().includes(searchInput)
-    );
-
-  useEffect(() => {
-    setIsLoading(true);
-    fetchCoins();
-  }, [currency]);
 
   return (
     <ThemeProvider theme={darkTheme}>
@@ -93,7 +82,7 @@ const CoinsTable = () => {
           onChange={(e) => setSearchInput(e.target.value)}
         />
         <TableContainer style={{ marginTop: 16 }}>
-          {isLoading ? (
+          {!coins ? (
             <LinearProgress style={{ backgroundColor: "gold" }} />
           ) : (
             <Table>
